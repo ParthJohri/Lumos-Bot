@@ -2,6 +2,7 @@
 const fs = require("fs");
 const ytdl = require("ytdl-core");
 const axios = require("axios");
+const execSync = require("child_process").execSync;
 
 // *! To fetch answers from OPEN AI
 const { Configuration, OpenAIApi } = require("openai");
@@ -84,39 +85,31 @@ async function WABot() {
     const text = getText(message);
     if (!text.toLowerCase().startsWith("@ytd")) return;
     const videoURL = text.slice(4);
-    const filePath = "downloads/video.mp4"; // Path to save the downloaded video in MP4 format
-    const downloadStream = ytdl(videoURL, { quality: "highest" });
-    downloadStream.pipe(fs.createWriteStream(filePath)).on("finish", () => {
-      // File download completed
-      console.log("Video downloaded successfully");
-    });
+    const downloadStream = ytdl(videoURL, { quality: 18 });
+    downloadStream
+      .pipe(fs.createWriteStream("downloads/video.m4v"))
+      .on("finish", () => {
+        // File download completed
+        console.log("Video downloaded successfully");
+        // Read the downloaded video file
+        const videoBuffer = fs.readFileSync("downloads/video.m4v");
 
-    // Read the downloaded video file
-    const videoBuffer = fs.readFileSync(filePath);
-
-    // Send the message
-    sendMessage(key.remoteJid, {
-      video: videoBuffer,
-      caption: "Video Generated!",
-      mimetype: "video/mp4", // Set the mimetype to specify the video format
-    });
+        // Send the message
+        sendMessage(key.remoteJid, {
+          video: videoBuffer,
+          caption: "Unveiling your cinematic creation, now.",
+          mimetype: "video/mp4", // Set the mimetype to specify the video format
+        });
+      });
   };
-  async function downloadInstagramPost(url, savePath) {
-    try {
-      const response = await axios.get(url, { responseType: "arraybuffer" });
-      fs.writeFileSync(savePath, response.data);
-      console.log("Download complete!");
-    } catch (error) {
-      console.error("Error downloading the post:", error);
-    }
-  }
+
   const handleIG = async (msg) => {
     const { key, message } = msg;
     const text = getText(message);
     if (!text.toLowerCase().startsWith("@igd")) return;
-    const postUrl = text.slice(4);
+    const url = text.slice(4);
+    callPythonFunction(url);
     const savePath = "downloads/ig.mp4";
-    downloadInstagramPost(postUrl, savePath);
     // Read the downloaded video file
     const videoBuffer = fs.readFileSync(savePath);
     sendMessage(
@@ -129,6 +122,7 @@ async function WABot() {
       { quoted: msg }
     );
   };
+
   const handleAi = async (msg) => {
     const { key, message } = msg;
     const text = getText(message);
@@ -158,7 +152,7 @@ async function WABot() {
     const text = getText(message);
     if (!text.toLowerCase().startsWith("@commands")) return;
     const command =
-      "*@all* - to tag all users\n*@mirror* - to mirror your text\n*@commands* - to list all commands\n*@ask* - to ask openai\n*@ytd* - to download youtube video, put one space after ytd";
+      "*@all* - to tag all users\n*@mirror* - to mirror your text\n*@commands* - to list all commands\n*@ask* - to ask openai\n*@ytd* - to download youtube video, put one space after ytd and have patience while it gets downloaded";
     sendMessage(key.remoteJid, { text: command }, { quoted: msg });
   };
   const handleMirror = async (msg) => {
