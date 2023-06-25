@@ -16,8 +16,12 @@
     "exec": "^0.2.1",
     "fluent-ffmpeg": "^2.1.2",
     "openai": "^3.3.0",
+    "openweather-apis": "^4.5.0",
     "python-shell": "^5.0.0",
     "qrcode-terminal": "^0.12.0",
+    "sharp": "^0.30.7",
+    "weather": "^1.0.4",
+    "weather-js": "^2.0.0",
     "ytdl-core": "^4.11.4"
   },
   "devDependencies": {

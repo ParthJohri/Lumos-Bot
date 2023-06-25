@@ -2,7 +2,9 @@
 const fs = require("fs");
 const ytdl = require("ytdl-core");
 const axios = require("axios");
+const spawn = require("child_process").spawn;
 const execSync = require("child_process").execSync;
+const sharp = require("sharp");
 
 // *! To fetch answers from OPEN AI
 const { Configuration, OpenAIApi } = require("openai");
@@ -45,11 +47,11 @@ const model = "text-davinci-003";
 
 // *!whatsbot
 const makeWASocket = require("@whiskeysockets/baileys").default;
-
 const {
   DisconnectReason,
   useMultiFileAuthState,
   MessageType,
+  downloadMediaMessage,
 } = require("@whiskeysockets/baileys");
 
 const store = {};
@@ -67,7 +69,11 @@ async function WABot() {
   });
   const getText = (message) => {
     try {
-      return message.conversation || message.extendedTextMessage.text;
+      return (
+        message.conversation ||
+        message.extendedTextMessage.text ||
+        message.imageMessage.caption
+      );
     } catch {
       return "";
     }
@@ -80,11 +86,14 @@ async function WABot() {
       console.error("Error sending message: ", err);
     }
   };
+
   const handleYTDownload = async (msg) => {
     const { key, message } = msg;
     const text = getText(message);
-    if (!text.toLowerCase().startsWith("@ytd")) return;
-    const videoURL = text.slice(4);
+    const s = "@ytd";
+    if (!text.toLowerCase().startsWith(s)) return;
+    const str = text.slice(s.length + 1);
+    const videoURL = str.trim();
     const downloadStream = ytdl(videoURL, { quality: 18 });
     downloadStream
       .pipe(fs.createWriteStream("downloads/video.m4v"))
@@ -101,6 +110,58 @@ async function WABot() {
           mimetype: "video/mp4", // Set the mimetype to specify the video format
         });
       });
+  };
+  async function downloadImage(imageUrl, outputFilePath) {
+    try {
+      const response = await axios.get(imageUrl, {
+        responseType: "arraybuffer",
+      });
+      const imageBuffer = Buffer.from(response.data, "binary");
+      fs.writeFileSync(outputFilePath, imageBuffer);
+      console.log("Image downloaded successfully!");
+    } catch (error) {
+      console.error("Error occurred while downloading the image:", error);
+    }
+  }
+  const handleFbImg = async (msg) => {
+    const { key, message } = msg;
+    const text = getText(message);
+    if (!text.toLowerCase().includes("@fbi")) return;
+    const str = text.slice(4);
+    const imgURL = str.trim();
+    const outputFilePath = "downloads/fbimage.jpeg";
+    await downloadImage(imgURL, outputFilePath);
+    sendMessage(key.remoteJid, {
+      caption: "Unveiling your cinematic creation, now.",
+      mimetype: "image/jpeg", // Set the mimetype to specify the video format
+    });
+  };
+
+  const handleFbVideos = async (msg) => {
+    const { key, message } = msg;
+    const text = getText(message);
+    if (!text.toLowerCase().startsWith("@fb")) return;
+    const str = text.slice(3);
+    const videoURL = str.trim();
+    const pythonProcess = spawn("python3", ["fb.py", videoURL]);
+    pythonProcess.on("close", (code) => {
+      if (code === 0) {
+        // Python process completed successfully
+        console.log("Python process completed successfully");
+        // Perform further actions here
+        const videoBuffer = fs.readFileSync("downloads/fbvideo.mp4");
+        // Send the message
+        sendMessage(key.remoteJid, {
+          video: videoBuffer,
+          caption: "Unveiling your cinematic creation, now.",
+          mimetype: "video/mp4", // Set the mimetype to specify the video format
+        });
+      } else {
+        // Python process failed
+        console.log("Python process failed");
+        // Handle the failure case here
+      }
+    });
   };
 
   const handleIG = async (msg) => {
@@ -152,9 +213,10 @@ async function WABot() {
     const text = getText(message);
     if (!text.toLowerCase().startsWith("@commands")) return;
     const command =
-      "*@all* - to tag all users\n*@mirror* - to mirror your text\n*@commands* - to list all commands\n*@ask* - to ask openai\n*@ytd* - to download youtube video, put one space after ytd and have patience while it gets downloaded";
+      "*@all* - To Tag All Users\n*@mirror* - To Mirror Your Text\n*@commands* - To List All Commands\n*@ask* - To Ask Your Query\n*@ytd* - To Download Youtube video, put one space after ytd and have patience while it gets downloaded\n*@meme* - *1* For *Wholesome* Meme And *2* For *Dank* Meme\n*@fbd* - After This Add *FB Video Link* You Want To Download";
     sendMessage(key.remoteJid, { text: command }, { quoted: msg });
   };
+
   const handleMirror = async (msg) => {
     const { key, message } = msg;
     const text = getText(message);
@@ -164,6 +226,71 @@ async function WABot() {
     console.log(reply);
     sendMessage(key.remoteJid, { text: reply });
   };
+  const myMap = new Map();
+  myMap.set("1", "wholesomememes");
+  myMap.set("2", "dankmemes");
+  const handleMeme = async (msg) => {
+    // Meme Function
+    try {
+      const { key, message } = msg;
+      const text = getText(message);
+      console.log(text);
+      console.log(text.slice(6));
+      const str = text.slice(5);
+      const trimmedStr = str.trim();
+      const k = trimmedStr;
+      let response = "";
+      if (k.length == 0)
+        response = await axios.get(`https://meme-api.com/gimme`);
+      else {
+        const genre = myMap.get(k);
+        console.log(genre);
+        response = await axios.get(`https://meme-api.com/gimme/${genre}`);
+      }
+      // console.log(response);
+      const memeUrl = response.data.url;
+      const memeCaption = response.data.title;
+      // console.log(memeCaption);
+      const mcaption = memeCaption || "";
+      buttonMessage = {
+        image: { url: memeUrl },
+        caption: mcaption,
+        headerType: 4,
+      };
+      sendMessage(key.remoteJid, buttonMessage);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const handleSticker = async (msg) => {
+    const { key, message } = msg;
+    console.log(msg);
+    const filePath = "downloads/sticker.jpeg";
+    const outputFilePath = "downloads/output.jpeg";
+    if (message && message.imageMessage) {
+      const caption = message.imageMessage.caption;
+      try {
+        // Download the media message
+        const response = await axios.get(message.imageMessage.url, {
+          responseType: "arraybuffer",
+        });
+        const mediaBuffer = response.data;
+
+        // Save the media message to a file
+        fs.writeFileSync(filePath, mediaBuffer);
+
+        // Resize the image using Sharp
+        await sharp(filePath).resize(200, 200).toFile(outputFilePath);
+
+        // Send the resized image as a message
+        const media = MessageMedia.fromFilePath(outputFilePath);
+        await sendMessage(key.remoteJid, media);
+      } catch (error) {
+        console.error("Error occurred while processing the image:", error);
+      }
+    }
+  };
+
   const handleAll = async (msg) => {
     const { key, message } = msg;
     const text = getText(message);
@@ -210,12 +337,16 @@ async function WABot() {
         if (!msg.message) return;
         // !mirror hello
         // processing
+        if (getText(msg.message).startsWith("@meme")) handleMeme(msg);
+        handleSticker(msg); // Not Working
         handleMirror(msg);
         handleAll(msg);
         handleCommand(msg);
         handleAi(msg);
         handleYTDownload(msg);
-        handleIG(msg);
+        handleIG(msg); // Not Working
+        handleFbVideos(msg);
+        handleFbImg(msg); //Not Working
       });
     }
   });
