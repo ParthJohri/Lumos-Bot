@@ -5,6 +5,7 @@ const axios = require("axios");
 const spawn = require("child_process").spawn;
 const execSync = require("child_process").execSync;
 const sharp = require("sharp");
+const linkedIn = require("linkedin-jobs-api");
 
 // *! To fetch answers from OPEN AI
 const { Configuration, OpenAIApi } = require("openai");
@@ -89,7 +90,8 @@ async function WABot() {
 
   const handleYTDownload = async (msg) => {
     const { key, message } = msg;
-    const text = getText(message);
+    const ss = getText(message);
+    const text = ss.trim();
     const s = "@ytd";
     if (!text.toLowerCase().startsWith(s)) return;
     const str = text.slice(s.length + 1);
@@ -125,7 +127,8 @@ async function WABot() {
   }
   const handleFbImg = async (msg) => {
     const { key, message } = msg;
-    const text = getText(message);
+    const ss = getText(message);
+    const text = ss.trim();
     if (!text.toLowerCase().includes("@fbi")) return;
     const str = text.slice(4);
     const imgURL = str.trim();
@@ -139,7 +142,8 @@ async function WABot() {
 
   const handleFbVideos = async (msg) => {
     const { key, message } = msg;
-    const text = getText(message);
+    const ss = getText(message);
+    const text = ss.trim();
     if (!text.toLowerCase().startsWith("@fb")) return;
     const str = text.slice(3);
     const videoURL = str.trim();
@@ -166,7 +170,8 @@ async function WABot() {
 
   const handleIG = async (msg) => {
     const { key, message } = msg;
-    const text = getText(message);
+    const str = getText(message);
+    const text = str.trim();
     if (!text.toLowerCase().startsWith("@igd")) return;
     const url = text.slice(4);
     callPythonFunction(url);
@@ -186,7 +191,8 @@ async function WABot() {
 
   const handleAi = async (msg) => {
     const { key, message } = msg;
-    const text = getText(message);
+    const str = getText(message);
+    const text = str.trim();
     if (!text.toLowerCase().startsWith("@ask")) return;
     const topic = text.slice(5);
     // Function to generate the prompt for the OpenAI API
@@ -210,10 +216,23 @@ async function WABot() {
   };
   const handleCommand = async (msg) => {
     const { key, message } = msg;
-    const text = getText(message);
+    const str = getText(message);
+    const text = str.trim();
     if (!text.toLowerCase().startsWith("@commands")) return;
-    const command =
-      "*@all* - To Tag All Users\n*@mirror* - To Mirror Your Text\n*@commands* - To List All Commands\n*@ask* - To Ask Your Query\n*@ytd* - To Download Youtube video, put one space after ytd and have patience while it gets downloaded\n*@meme* - *1* For *Wholesome* Meme And *2* For *Dank* Meme\n*@fbd* - After This Add *FB Video Link* You Want To Download";
+    const command = `👋 Welcome to the WhatsApp Bot!
+
+🤖 This bot can assist you with various commands. Here are some available commands:
+
+*@all* - Tag all users
+*@mirror* - Mirror your text
+*@commands* - List all commands
+*@ask* - Ask a question
+*@ytd* - Download a YouTube video (provide the video link after the command)
+*@meme* - Get a meme (1 for wholesome, 2 for dank)
+*@fbd* - Download a Facebook video (provide the video link after the command)
+*@jobs* - Get the latest job listings
+
+Please enter a command to get started. If you need any assistance, type *@commands* to see the full list of available commands.`;
     sendMessage(key.remoteJid, { text: command }, { quoted: msg });
   };
 
@@ -291,6 +310,60 @@ async function WABot() {
     }
   };
 
+  const handleJobs = async (msg) => {
+    const { key, message } = msg;
+    const str = getText(message);
+    const text = str.trim();
+    if (!text.toLowerCase().startsWith("@jobs")) return;
+
+    const queryOptions = {
+      keyword: "software engineer",
+      location: "India",
+      dateSincePosted: "past Week",
+      jobType:
+        "full time, part time, contract, temporary, volunteer, internship",
+      remoteFilter: "remote",
+      salary: "100000",
+      experienceLevel:
+        "internship, entry level, associate, senior, director, executive",
+      limit: "10",
+    };
+
+    linkedIn.query(queryOptions).then((response) => {
+      const data = response;
+      let reply = "";
+      let serialNumber = 1;
+      console.log(data);
+      const horizontalLineEmoji = "─".repeat(20);
+      const horizontalLine = "*".repeat(20);
+      for (const job of data) {
+        const position = job.position;
+        const company = job.company;
+        const location = job.location;
+        const date = job.date;
+        const salary = job.salary;
+        const jobUrl = job.jobUrl;
+        const txt = "Jobs";
+        const Position =
+          position === "" ? "" : "*Position:* " + position + "\n";
+        const Company = company === "" ? "" : "*Company:* " + company + "\n";
+        const Location =
+          location === "" ? "" : "*Location:* " + location + "\n";
+        const Date = date === "" ? "" : "*Date:* " + date + "\n";
+        const Salary = salary === "" ? "" : "*Salary:* " + salary + "\n";
+        const URL = jobUrl === "" ? "" : "*Job URL:* " + jobUrl + "\n";
+        const dataToBeStored = `*Job ${serialNumber}*\n${horizontalLineEmoji}\n${Position}${Company}${Location}${Date}${Salary}${URL}\n`;
+        reply = reply === "" ? dataToBeStored : reply + dataToBeStored;
+        serialNumber++;
+      }
+      const sorryMessage = "Sorry, No Jobs Are Found Right Now";
+      reply =
+        reply === ""
+          ? sorryMessage
+          : reply + horizontalLine + "\n\t\t*All The Best*\n" + horizontalLine;
+      sendMessage(key.remoteJid, { text: reply });
+    });
+  };
   const handleAll = async (msg) => {
     const { key, message } = msg;
     const text = getText(message);
@@ -338,14 +411,17 @@ async function WABot() {
         // !mirror hello
         // processing
         if (getText(msg.message).startsWith("@meme")) handleMeme(msg);
+        else if (getText(msg.message).startsWith("@mirror")) handleMirror(msg);
+        else if (getText(msg.message).startsWith("@all")) handleAll(msg);
+        else if (getText(msg.message).startsWith("@commands"))
+          handleCommand(msg);
+        else if (getText(msg.message).startsWith("@ask")) handleAi(msg);
+        else if (getText(msg.message).startsWith("@ytd")) handleYTDownload(msg);
+        else if (getText(msg.message).startsWith("@fb")) handleFbVideos(msg);
+        else if (getText(msg.message).startsWith("@jobs")) handleJobs(msg);
+
         handleSticker(msg); // Not Working
-        handleMirror(msg);
-        handleAll(msg);
-        handleCommand(msg);
-        handleAi(msg);
-        handleYTDownload(msg);
         handleIG(msg); // Not Working
-        handleFbVideos(msg);
         handleFbImg(msg); //Not Working
       });
     }
