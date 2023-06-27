@@ -2,8 +2,8 @@
 const fs = require("fs");
 const ytdl = require("ytdl-core");
 const axios = require("axios");
+const path = require("path");
 const spawn = require("child_process").spawn;
-const execSync = require("child_process").execSync;
 const sharp = require("sharp");
 const linkedIn = require("linkedin-jobs-api");
 
@@ -113,18 +113,44 @@ async function WABot() {
         });
       });
   };
-  async function downloadImage(imageUrl, outputFilePath) {
-    try {
-      const response = await axios.get(imageUrl, {
-        responseType: "arraybuffer",
+  const downloadFile = (fileUrl, downloadFolder) => {
+    // Get the file name
+    const fileExtension = path.extname(fileUrl) || ".jpg";
+    const fullFileName = "groupPic" + fileExtension;
+
+    // The path of the downloaded file on our machine
+    const localFilePath = path.resolve(__dirname, downloadFolder, fullFileName);
+
+    return new Promise((resolve, reject) => {
+      const writeStream = fs.createWriteStream(localFilePath);
+
+      const request = axios({
+        method: "GET",
+        url: fileUrl,
+        responseType: "stream",
       });
-      const imageBuffer = Buffer.from(response.data, "binary");
-      fs.writeFileSync(outputFilePath, imageBuffer);
-      console.log("Image downloaded successfully!");
-    } catch (error) {
-      console.error("Error occurred while downloading the image:", error);
-    }
-  }
+
+      request
+        .then((response) => {
+          response.data.pipe(writeStream);
+
+          writeStream.on("finish", () => {
+            console.log("Successfully downloaded file!");
+            resolve(localFilePath);
+          });
+
+          writeStream.on("error", (error) => {
+            console.error("Error occurred while writing the file:", error);
+            reject(error);
+          });
+        })
+        .catch((error) => {
+          console.error("Error occurred while downloading the file:", error);
+          reject(error);
+        });
+    });
+  };
+
   const handleFbImg = async (msg) => {
     const { key, message } = msg;
     const ss = getText(message);
@@ -224,13 +250,25 @@ async function WABot() {
 🤖 This bot can assist you with various commands. Here are some available commands:
 
 *@all* - Tag all users
+*@ask* - Ask a question
 *@mirror* - Mirror your text
 *@commands* - List all commands
-*@ask* - Ask a question
-*@ytd* - Download a YouTube video (provide the video link after the command)
-*@meme* - Get a meme (1 for wholesome, 2 for dank)
-*@fbd* - Download a Facebook video (provide the video link after the command)
 *@jobs* - Get the latest job listings
+*@meme* - Get a meme (1 for wholesome, 2 for dank)
+*@ytd* - Download a YouTube video (provide the video link after the command)
+*@fbd* - Download a Facebook video (provide the video link after the command)
+
+*Group Functions*
+-----------------
+*@gcreate* - To create the Group
+*@gname* - To change the Group Name by writing Name after the command
+*@gdes* - To change the Group Description by writing Description after the command
+*@leave* - To leave the group
+*@gset* - To set the group settings
+*@gcode* - To get the Group Code 
+*@rcode* - To remove the Group Code
+*@gpic* - To set the Group Pic [Just Add Image Url After Command]
+*@rpic* - To remove the Group Pic
 
 Please enter a command to get started. If you need any assistance, type *@commands* to see the full list of available commands.`;
     sendMessage(key.remoteJid, { text: command }, { quoted: msg });
@@ -248,6 +286,10 @@ Please enter a command to get started. If you need any assistance, type *@comman
   const myMap = new Map();
   myMap.set("1", "wholesomememes");
   myMap.set("2", "dankmemes");
+  myMap.set("a", "announcement");
+  myMap.set("na", "not_announcement");
+  myMap.set("u", "unlocked");
+  myMap.set("l", "locked");
   const handleMeme = async (msg) => {
     // Meme Function
     try {
@@ -364,9 +406,134 @@ Please enter a command to get started. If you need any assistance, type *@comman
       sendMessage(key.remoteJid, { text: reply });
     });
   };
-  const handleAll = async (msg) => {
+  const handleAddName = async (msg) => {
     const { key, message } = msg;
     const text = getText(message);
+    const tag = "@gname";
+    const str = text.slice(tag.length);
+    const title = str.trim();
+    await sock.groupUpdateSubject(key.remoteJid, title);
+  };
+  const handleGroupSubject = async (msg) => {
+    const { key, message } = msg;
+    const text = getText(message);
+    const tag = "@gsub";
+    const str = text.slice(tag.length);
+    const title = str.trim();
+    await sock.groupUpdateDescription(key.remoteJid, title);
+  };
+  const handleAddDescription = async (msg) => {
+    const { key, message } = msg;
+    const text = getText(message);
+    const tag = "@gdes";
+    const str = text.slice(tag.length);
+    const title = str.trim();
+    await sock.groupUpdateDescription(key.remoteJid, title);
+  };
+  const handleGroupLeave = async (msg) => {
+    const { key, message } = msg;
+    try {
+      await sock.groupLeave(key.remoteJid);
+    } catch (e) {
+      // (will throw error if it fails)
+      console.log("Error occured");
+    }
+  };
+  const handleGroupSettings = async (msg) => {
+    const { key, message } = msg;
+    const text = getText(message);
+    const tag = "@gset";
+    const str = text.slice(tag.length);
+    const title = str.trim();
+    try {
+      await sock.groupSettingUpdate(key.remoteJid, String(myMap.get(title)));
+    } catch (e) {
+      // (will throw error if it fails)
+      sendMessage(key.remoteJid, {
+        text: "Sorry, You don't have admin rights",
+      });
+    }
+  };
+  const handleGetGroupCode = async (msg) => {
+    const { key, message } = msg;
+    const code = await sock.groupInviteCode(key.remoteJid);
+    sendMessage(key.remoteJid, { text: `Your *Group Code* Is: ${code}` });
+  };
+  const handleRevokeGroupCode = async (msg) => {
+    const { key, message } = msg;
+    const code = await sock.groupRevokeInvite(key.remoteJid);
+    sendMessage(key.remoteJid, { text: `Your *Group Code* Is Revoked!` });
+  };
+  const handleCreateGroup = async (msg) => {
+    const { key, message } = msg;
+    const text = getText(message);
+    const tag = "@gcreate";
+    const str = text.slice(tag.length);
+    const number = str.trim();
+    try {
+      const group = await sock.groupCreate("New Group", [
+        `${number}@s.whatsapp.net`,
+      ]);
+      sock.sendMessage(group.id, {
+        text: `Your Group Is Created, You Can Change The Group Name By The *@gname* Command`,
+      }); // say hello to everyone on the group
+    } catch (e) {
+      sock.sendMessage(key.remoteJid, {
+        text: "Please Enter Valid Number With Country Code[No + sign needed]",
+      }); // say hello to everyone on the group
+    }
+  };
+
+  const handleGroupAdd = async (msg) => {
+    const { key, message } = msg;
+    const text = getText(message);
+    const tag = "@gadd";
+    const str = text.slice(tag.length);
+    const number = str.trim();
+    console.log(number);
+    const group = await sock.groupParticipantsUpdate(
+      key.remoteJid,
+      [`+${number}@s.whatsapp.net`],
+      "add" // replace this parameter with "remove", "demote" or "promote"
+    );
+  };
+  const deleteFile = (filePath) => {
+    return new Promise((resolve, reject) => {
+      fs.unlink(filePath, (error) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve();
+        }
+      });
+    });
+  };
+  const handleGroupDisplayPicture = async (msg) => {
+    const { key, message } = msg;
+    const text = getText(message);
+    const tag = "@gpic";
+    const str = text.slice(tag.length);
+    const URL = str.trim();
+    console.log(URL);
+    try {
+      await downloadFile(URL, "downloads");
+
+      await sock.updateProfilePicture(key.remoteJid, {
+        url: "downloads/groupPic.jpg",
+      });
+      // await deleteFile("downloads/groupPic.jpg");
+    } catch (e) {
+      sendMessage(key.remoteJid, { text: `Please Enter Valid URL` });
+    }
+  };
+  const handleRemoveDisplayPicture = async (msg) => {
+    const { key, message } = msg;
+    await sock.removeProfilePicture(key.remoteJid);
+  };
+  const handleAll = async (msg) => {
+    const { key, message } = msg;
+    const str = getText(message);
+    const text = str.trim();
     // @all @All
     if (!text.toLowerCase().startsWith("@all")) return;
     // 1. Get All Group Members
@@ -419,10 +586,28 @@ Please enter a command to get started. If you need any assistance, type *@comman
         else if (getText(msg.message).startsWith("@ytd")) handleYTDownload(msg);
         else if (getText(msg.message).startsWith("@fb")) handleFbVideos(msg);
         else if (getText(msg.message).startsWith("@jobs")) handleJobs(msg);
-
-        handleSticker(msg); // Not Working
-        handleIG(msg); // Not Working
-        handleFbImg(msg); //Not Working
+        else if (getText(msg.message).startsWith("@gname")) handleAddName(msg);
+        else if (getText(msg.message).startsWith("@gdes"))
+          handleAddDescription(msg);
+        else if (getText(msg.message).startsWith("@leave"))
+          handleGroupLeave(msg);
+        else if (getText(msg.message).startsWith("@gset"))
+          handleGroupSettings(msg);
+        else if (getText(msg.message).startsWith("@gcode"))
+          handleGetGroupCode(msg);
+        else if (getText(msg.message).startsWith("@rcode"))
+          handleRevokeGroupCode(msg);
+        else if (getText(msg.message).startsWith("@gpic"))
+          // Not Working Correctly
+          handleGroupDisplayPicture(msg);
+        else if (getText(msg.message).startsWith("@rpic"))
+          handleRemoveDisplayPicture(msg);
+        else if (getText(msg.message).startsWith("@gcreate"))
+          handleCreateGroup(msg);
+        // else if (getText(msg.message).startsWith("@gadd")) handleGroupAdd(msg); // Not Working
+        // handleSticker(msg); // Not Working
+        // handleIG(msg); // Not Working
+        // handleFbImg(msg); //Not Working
       });
     }
   });
