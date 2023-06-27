@@ -6,6 +6,7 @@ const path = require("path");
 const spawn = require("child_process").spawn;
 const sharp = require("sharp");
 const linkedIn = require("linkedin-jobs-api");
+const { freshMeme } = require("./meme.js");
 
 // *! To fetch answers from OPEN AI
 const { Configuration, OpenAIApi } = require("openai");
@@ -290,30 +291,30 @@ Please enter a command to get started. If you need any assistance, type *@comman
   myMap.set("na", "not_announcement");
   myMap.set("u", "unlocked");
   myMap.set("l", "locked");
+
   const handleMeme = async (msg) => {
     // Meme Function
+    const { key, message } = msg;
+    const text = getText(message);
+    const str = text.slice(5);
+    const trimmedStr = str.trim();
+    const subreddit = trimmedStr;
     try {
-      const { key, message } = msg;
-      const text = getText(message);
-      console.log(text);
-      console.log(text.slice(6));
-      const str = text.slice(5);
-      const trimmedStr = str.trim();
-      const k = trimmedStr;
-      let response = "";
-      if (k.length == 0)
-        response = await axios.get(`https://meme-api.com/gimme`);
-      else {
-        const genre = myMap.get(k);
-        console.log(genre);
-        response = await axios.get(`https://meme-api.com/gimme/${genre}`);
-      }
-      // console.log(response);
-      const memeUrl = response.data.url;
-      const memeCaption = response.data.title;
-      // console.log(memeCaption);
-      const mcaption = memeCaption || "";
-      buttonMessage = {
+      const response = await freshMeme();
+      console.log(response);
+      let memeUrl = "";
+      let memeCaption = "";
+      let mcaption = "";
+      let img = "";
+      let nsf = "";
+      do {
+        memeUrl = response.img;
+        memeCaption = response.title;
+        mcaption = memeCaption || "";
+        img = response.link;
+        nsf = response.nsfw;
+      } while (img !== "image" && nsf !== "nsfw");
+      const buttonMessage = {
         image: { url: memeUrl },
         caption: mcaption,
         headerType: 4,
@@ -321,6 +322,7 @@ Please enter a command to get started. If you need any assistance, type *@comman
       sendMessage(key.remoteJid, buttonMessage);
     } catch (error) {
       console.error(error);
+      sendMessage(key.remoteJid, { text: "Try Again Later!" });
     }
   };
   const handleSticker = async (msg) => {
