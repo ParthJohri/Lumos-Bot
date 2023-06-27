@@ -37,6 +37,17 @@ Please enter a command to get started. If you need any assistance, type *@comman
 
 Please note that some commands may require additional information or a bit of patience, especially when downloading YouTube videos. Sit back, relax, and let the bot handle the rest.
 
+# Bot Deployment on EC2
+
+This bot is deployed on an EC2 (Elastic Compute Cloud) instance. EC2 is a web service provided by Amazon Web Services (AWS) that allows you to create and manage virtual servers in the cloud.
+
+## Deployment Steps
+
+1. Provisioned an EC2 instance on AWS.
+2. Installed the necessary dependencies and configured the environment.
+3. Deployed the bot code to the EC2 instance.
+4. Started the bot application using the appropriate commands.
+
 ## *Feedback and Support*
 
 If you encounter any issues, have suggestions, or need assistance, feel free to reach out to me.
