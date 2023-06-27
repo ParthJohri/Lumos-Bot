@@ -9,6 +9,9 @@ Welcome to the WhatsApp Bot! This bot provides you with an array of useful funct
 - *@commands* - Retrieve a list of all available commands to explore the bot's capabilities.
 - *@ask* - Get answers to your queries using the power of OpenAI.
 - *@ytd* - Download YouTube videos directly from the bot. Simply type *@ytd* followed by the video URL and wait for it to be downloaded.
+- *@meme* - Get a meme (1 for wholesome, 2 for dank)
+- *@fbd* - Download a Facebook video (provide the video link after the command)
+- *@jobs* - Get the latest job listings
 
 ## How to Use
 
