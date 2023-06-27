@@ -254,8 +254,8 @@ async function WABot() {
 *@ask* - Ask a question
 *@mirror* - Mirror your text
 *@commands* - List all commands
-*@jobs* - Write the jobType after the command to get the latest job listings 
-*@meme* - Get a meme (1 for wholesome, 2 for dank)
+*@jobs* - Write the jobType like @jobs software after the command to get the latest job listings 
+*@meme* - Get a random meme 
 *@ytd* - Download a YouTube video (provide the video link after the command)
 *@fbd* - Download a Facebook video (provide the video link after the command)
 
