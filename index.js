@@ -253,7 +253,7 @@ async function WABot() {
 *@ask* - Ask a question
 *@mirror* - Mirror your text
 *@commands* - List all commands
-*@jobs* - Get the latest job listings
+*@jobs* - Write the jobType after the command to get the latest job listings 
 *@meme* - Get a meme (1 for wholesome, 2 for dank)
 *@ytd* - Download a YouTube video (provide the video link after the command)
 *@fbd* - Download a Facebook video (provide the video link after the command)
@@ -357,9 +357,10 @@ Please enter a command to get started. If you need any assistance, type *@comman
     const str = getText(message);
     const text = str.trim();
     if (!text.toLowerCase().startsWith("@jobs")) return;
-
+    const jType = text.slice(5);
+    const jobSearch = jType.trim();
     const queryOptions = {
-      keyword: "software engineer",
+      keyword: jobSearch,
       location: "India",
       dateSincePosted: "past Week",
       jobType:
