@@ -1,17 +1,33 @@
 # WhatsApp Bot
 
-Welcome to the WhatsApp Bot! This bot provides you with an array of useful functionalities to enhance your WhatsApp group experience. From tagging all users to downloading YouTube videos, this bot has got you covered.
+👋 Welcome to the WhatsApp Bot!
 
-## Features
+🤖 This bot can assist you with various commands. Here are some available commands:
 
-- *@all* - Use this command to tag all users in the group, ensuring everyone gets the message.
-- *@mirror* - Make your text mirrored for some fun and creative messages.
-- *@commands* - Retrieve a list of all available commands to explore the bot's capabilities.
-- *@ask* - Get answers to your queries using the power of OpenAI.
-- *@ytd* - Download YouTube videos directly from the bot. Simply type *@ytd* followed by the video URL and wait for it to be downloaded.
-- *@meme* - Get a meme (1 for wholesome, 2 for dank)
-- *@fbd* - Download a Facebook video (provide the video link after the command)
-- *@jobs* - Get the latest job listings
+*Popular Commands*
+-----------------
+- *@all* - Tag all users.
+- *@ask* - Ask a question.
+- *@mirror* - Mirror your text.
+- *@commands* - List all commands.
+- *@jobs* - Get the latest job listings.
+- *@meme* - Get a meme (1 for wholesome, 2 for dank).
+- *@ytd* - Download a YouTube video (provide the video link after the command).
+- *@fbd* - Download a Facebook video (provide the video link after the command).
+
+*Group Commands*
+-----------------
+- *@gcreate* - Create a group.
+- *@gname* - Change the group name (write the desired name after the command).
+- *@gdes* - Change the group description (write the desired description after the command).
+- *@leave* - Leave the group.
+- *@gset* - Set the group settings.
+- *@gcode* - Get the group code.
+- *@rcode* - Remove the group code.
+- *@gpic* - Set the group picture (just add the image URL after the command).
+- *@rpic* - Remove the group picture.
+
+Please enter a command to get started. If you need any assistance, type *@commands* to see the full list of available commands.
 
 ## How to Use
 
@@ -24,6 +40,6 @@ Please note that some commands may require additional information or a bit of pa
 
 ## Feedback and Support
 
-If you encounter any issues, have suggestions, or need assistance, feel free to reach out to the bot administrator. We are committed to improving your experience and making this bot even more awesome!
+If you encounter any issues, have suggestions, or need assistance, feel free to reach out to me.
 
 Enjoy using the WhatsApp Bot and have a great time interacting with your group members!
