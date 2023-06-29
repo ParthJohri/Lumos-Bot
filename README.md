@@ -48,7 +48,7 @@
 
 Please enter a command to get started. If you need any assistance, type ***@commands*** to see the complete list of available commands.
 
-## *How to Use*
+## How to Use
 1. Add the WhatsApp Bot to your group chat.
 2. Type any of the commands mentioned above to trigger the desired functionality.
 3. Follow the prompts or provide the necessary input as instructed.
