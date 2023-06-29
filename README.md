@@ -46,7 +46,7 @@
 
 🔹 ***@rpic*** - Remove the group picture.
 
-Please enter a command to get started. If you need any assistance, type *@commands* to see the complete list of available commands.
+Please enter a command to get started. If you need any assistance, type ***@commands*** to see the complete list of available commands.
 
 ## *How to Use*
 1. Add the WhatsApp Bot to your group chat.
