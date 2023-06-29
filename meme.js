@@ -71,7 +71,6 @@ async function freshMeme() {
   return meme;
 }
 
-freshMeme();
 module.exports = {
   freshMeme: freshMeme,
 };

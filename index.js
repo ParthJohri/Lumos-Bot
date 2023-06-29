@@ -3,10 +3,12 @@ const fs = require("fs");
 const ytdl = require("ytdl-core");
 const axios = require("axios");
 const path = require("path");
+const cheerio = require("cheerio");
 const spawn = require("child_process").spawn;
 const sharp = require("sharp");
 const linkedIn = require("linkedin-jobs-api");
 const { freshMeme } = require("./meme.js");
+const { getRandomCompany } = require("./company.js");
 
 // *! To fetch answers from OPEN AI
 const { Configuration, OpenAIApi } = require("openai");
@@ -199,21 +201,13 @@ async function WABot() {
     const { key, message } = msg;
     const str = getText(message);
     const text = str.trim();
-    if (!text.toLowerCase().startsWith("@igd")) return;
-    const url = text.slice(4);
-    callPythonFunction(url);
-    const savePath = "downloads/ig.mp4";
-    // Read the downloaded video file
-    const videoBuffer = fs.readFileSync(savePath);
-    sendMessage(
-      key.remoteJid,
-      {
-        video: videoBuffer,
-        caption: "Video Generated!",
-        mimetype: "video/mp4", // Set the mimetype to specify the video format
-      },
-      { quoted: msg }
-    );
+    if (!text.toLowerCase().startsWith("@igp")) return;
+    const URl = text.slice(4);
+    const URL = await downloadAndSaveImage(URl);
+    const buttonMessage = {
+      image: { url: URL },
+    };
+    const sendMsg = await sock.sendMessage(key.remoteJid, buttonMessage);
   };
 
   const handleAi = async (msg) => {
@@ -250,25 +244,31 @@ async function WABot() {
 
 🤖 This bot can assist you with various commands. Here are some available commands:
 
-*@all* - Tag all users
-*@ask* - Ask a question
+*@commands* - To List all commands
+
+*General Functions*
+-----------------------------
 *@mirror* - Mirror your text
-*@commands* - List all commands
-*@jobs* - Write the jobType like @jobs software after the command to get the latest job listings 
+*@ask* - Ask a question
 *@meme* - Get a random meme 
+*@company* - Get a MAANG alternative company
+*@jobs* - Write the jobType like @jobs software after the command to get the latest job listings 
 *@ytd* - Download a YouTube video (provide the video link after the command)
 *@fbd* - Download a Facebook video (provide the video link after the command)
 
 *Group Functions*
------------------
-*@gcreate* - To create the Group
+---------------------------
+*@all* - Tag all users
 *@gname* - To change the Group Name by writing Name after the command
+*@gcreate* - To create the Group
 *@gdes* - To change the Group Description by writing Description after the command
 *@leave* - To leave the group
-*@gset* - To set the group settings
+*@gset a* - To allow only admins to send messages
+*@gset na* - To allow everyone in the group to send messages
+*@gset l* - To allow only admins to change group settings 
+*@gset u* - To allow anyone to change group settings
 *@gcode* - To get the Group Code 
 *@rcode* - To remove the Group Code
-*@gpic* - To set the Group Pic [Just Add Image Url After Command]
 *@rpic* - To remove the Group Pic
 
 Please enter a command to get started. If you need any assistance, type *@commands* to see the full list of available commands.`;
@@ -285,8 +285,6 @@ Please enter a command to get started. If you need any assistance, type *@comman
     sendMessage(key.remoteJid, { text: reply });
   };
   const myMap = new Map();
-  myMap.set("1", "wholesomememes");
-  myMap.set("2", "dankmemes");
   myMap.set("a", "announcement");
   myMap.set("na", "not_announcement");
   myMap.set("u", "unlocked");
@@ -300,20 +298,20 @@ Please enter a command to get started. If you need any assistance, type *@comman
     const trimmedStr = str.trim();
     const subreddit = trimmedStr;
     try {
-      const response = await freshMeme();
-      console.log(response);
       let memeUrl = "";
       let memeCaption = "";
       let mcaption = "";
       let img = "";
       let nsf = "";
       do {
+        const response = await freshMeme();
+        console.log(response);
         memeUrl = response.img;
         memeCaption = response.title;
         mcaption = memeCaption || "";
         img = response.link;
         nsf = response.nsfw;
-      } while (img !== "image" && nsf !== "nsfw");
+      } while (img !== "image" || nsf === "nsfw");
       const buttonMessage = {
         image: { url: memeUrl },
         caption: mcaption,
@@ -353,7 +351,15 @@ Please enter a command to get started. If you need any assistance, type *@comman
       }
     }
   };
-
+  const handleCompany = async (msg) => {
+    const { key, message } = msg;
+    const str = getText(message);
+    const text = str.trim();
+    if (!text.toLowerCase().startsWith("@company")) return;
+    const response = await getRandomCompany();
+    const reply = `*Company Name:* ${response.name}\n*Carrer Portal Link:* ${response.carrer_url}`;
+    sendMessage(key.remoteJid, { text: reply });
+  };
   const handleJobs = async (msg) => {
     const { key, message } = msg;
     const str = getText(message);
@@ -519,12 +525,14 @@ Please enter a command to get started. If you need any assistance, type *@comman
     const URL = str.trim();
     console.log(URL);
     try {
-      await downloadFile(URL, "downloads");
-
-      await sock.updateProfilePicture(key.remoteJid, {
-        url: "downloads/groupPic.jpg",
-      });
-      // await deleteFile("downloads/groupPic.jpg");
+      // Use the imported functions as needed
+      const imagePath = await downloadAndSaveImage(URL);
+      if (imagePath) {
+        console.log("ho");
+        await sock.updateProfilePicture(key.remoteJid, {
+          url: "downloads/groupPic.jpg",
+        });
+      }
     } catch (e) {
       sendMessage(key.remoteJid, { text: `Please Enter Valid URL` });
     }
@@ -580,15 +588,16 @@ Please enter a command to get started. If you need any assistance, type *@comman
         if (!msg.message) return;
         // !mirror hello
         // processing
-        if (getText(msg.message).startsWith("@meme")) handleMeme(msg);
+        if (getText(msg.message).startsWith("@commands")) handleCommand(msg);
+        else if (getText(msg.message).startsWith("@meme")) handleMeme(msg);
         else if (getText(msg.message).startsWith("@mirror")) handleMirror(msg);
         else if (getText(msg.message).startsWith("@all")) handleAll(msg);
-        else if (getText(msg.message).startsWith("@commands"))
-          handleCommand(msg);
         else if (getText(msg.message).startsWith("@ask")) handleAi(msg);
         else if (getText(msg.message).startsWith("@ytd")) handleYTDownload(msg);
         else if (getText(msg.message).startsWith("@fb")) handleFbVideos(msg);
         else if (getText(msg.message).startsWith("@jobs")) handleJobs(msg);
+        else if (getText(msg.message).startsWith("@company"))
+          handleCompany(msg);
         else if (getText(msg.message).startsWith("@gname")) handleAddName(msg);
         else if (getText(msg.message).startsWith("@gdes"))
           handleAddDescription(msg);
@@ -609,7 +618,7 @@ Please enter a command to get started. If you need any assistance, type *@comman
           handleCreateGroup(msg);
         // else if (getText(msg.message).startsWith("@gadd")) handleGroupAdd(msg); // Not Working
         // handleSticker(msg); // Not Working
-        // handleIG(msg); // Not Working
+        handleIG(msg); // Not Working
         // handleFbImg(msg); //Not Working
       });
     }
