@@ -1,33 +1,35 @@
 # WhatsApp Bot
 
-👋 Welcome to the WhatsApp Bot!
+👋 Welcome to the Parth-WBot!
 
-🤖 This bot can assist you with various commands. Here are some available commands:
+🤖 This WhatsApp bot can assist you with various commands. Here are some available commands:
 
-*Popular Commands*
------------------
-- *@all* - Tag all users.
-- *@ask* - Ask a question.
-- *@mirror* - Mirror your text.
-- *@commands* - List all commands.
-- *@jobs* - Get the latest job listings.
-- *@meme* - Get a meme (1 for wholesome, 2 for dank).
-- *@ytd* - Download a YouTube video (provide the video link after the command).
-- *@fbd* - Download a Facebook video (provide the video link after the command).
+**General Functions**
+-----------------------------
+🔸 *@mirror* - Mirror your text.
+🔸 *@ask* - Ask a question.
+🔸 *@meme* - Get a random meme.
+🔸 *@company* - Get an alternative company similar to MAANG (Microsoft, Apple, Amazon, Netflix, Google).
+🔸 *@jobs* - Get the latest job listings. Specify the job type after the command, e.g., *@jobs software*.
+🔸 *@ytd* - Download a YouTube video. Provide the video link after the command.
+🔸 *@fbd* - Download a Facebook video. Provide the video link after the command.
 
-*Group Commands*
------------------
-- *@gcreate* - Create a group.
-- *@gname* - Change the group name (write the desired name after the command).
-- *@gdes* - Change the group description (write the desired description after the command).
-- *@leave* - Leave the group.
-- *@gset* - Set the group settings.
-- *@gcode* - Get the group code.
-- *@rcode* - Remove the group code.
-- *@gpic* - Set the group picture (just add the image URL after the command).
-- *@rpic* - Remove the group picture.
+**Group Functions**
+---------------------------
+🔹 *@all* - Tag all users in the group.
+🔹 *@gname* - Change the group name by writing the desired name after the command.
+🔹 *@gcreate* - Create a new group.
+🔹 *@gdes* - Change the group description by writing the desired description after the command.
+🔹 *@leave* - Leave the group.
+🔹 *@gset a* - Allow only admins to send messages in the group.
+🔹 *@gset na* - Allow everyone in the group to send messages.
+🔹 *@gset l* - Allow only admins to change group settings.
+🔹 *@gset u* - Allow anyone to change group settings.
+🔹 *@gcode* - Get the group code.
+🔹 *@rcode* - Remove the group code.
+🔹 *@rpic* - Remove the group picture.
 
-Please enter a command to get started. If you need any assistance, type *@commands* to see the full list of available commands.
+Please enter a command to get started. If you need any assistance, type *@commands* to see the complete list of available commands.
 
 ## *How to Use*
 1. Add the WhatsApp Bot to your group chat.
@@ -50,6 +52,6 @@ This bot is deployed on an EC2 (Elastic Compute Cloud) instance. EC2 is a web se
 
 ## *Feedback and Support*
 
-If you encounter any issues, have suggestions, or need assistance, feel free to reach out to me.
+If you encounter any issues, have suggestions, or need assistance, feel free to contact me.
 
 Enjoy using the WhatsApp Bot and have a great time interacting with your group members!
