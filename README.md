@@ -6,28 +6,45 @@
 
 **General Functions**
 -----------------------------
-🔸 *@mirror* - Mirror your text.
-🔸 *@ask* - Ask a question.
-🔸 *@meme* - Get a random meme.
-🔸 *@company* - Get an alternative company similar to MAANG (Microsoft, Apple, Amazon, Netflix, Google).
-🔸 *@jobs* - Get the latest job listings. Specify the job type after the command, e.g., *@jobs software*.
-🔸 *@ytd* - Download a YouTube video. Provide the video link after the command.
-🔸 *@fbd* - Download a Facebook video. Provide the video link after the command.
+🔸 ***@mirror*** - Mirror your text.
+
+🔸 ***@ask*** - Ask a question.
+
+🔸 ***@meme*** - Get a random meme.
+
+🔸 ***@company*** - Get an alternative company similar to MAANG (Microsoft, Apple, Amazon, Netflix, Google).
+
+🔸 ***@jobs*** - Get the latest job listings. Specify the job type after the command, e.g., *@jobs software*.
+
+🔸 ***@ytd*** - Download a YouTube video. Provide the video link after the command.
+
+🔸 ***@fbd*** - Download a Facebook video. Provide the video link after the command.
 
 **Group Functions**
 ---------------------------
-🔹 *@all* - Tag all users in the group.
-🔹 *@gname* - Change the group name by writing the desired name after the command.
-🔹 *@gcreate* - Create a new group.
-🔹 *@gdes* - Change the group description by writing the desired description after the command.
-🔹 *@leave* - Leave the group.
-🔹 *@gset a* - Allow only admins to send messages in the group.
-🔹 *@gset na* - Allow everyone in the group to send messages.
-🔹 *@gset l* - Allow only admins to change group settings.
-🔹 *@gset u* - Allow anyone to change group settings.
+🔹 ***@all*** - Tag all users in the group.
+
+🔹 ***@gname*** - Change the group name by writing the desired name after the command.
+
+🔹 ***@gcreate*** - Create a new group.
+
+🔹 ***@gdes*** - Change the group description by writing the desired description after the command.
+
+🔹 ***@leave*** - Leave the group.
+
+🔹 ***@gset a*** - Allow only admins to send messages in the group.
+
+🔹 ***@gset na*** - Allow everyone in the group to send messages.
+
+🔹 ***@gset l*** - Allow only admins to change group settings.
+
+🔹 ***@gset u*** - Allow anyone to change group settings.
+
 🔹 *@gcode* - Get the group code.
-🔹 *@rcode* - Remove the group code.
-🔹 *@rpic* - Remove the group picture.
+
+🔹 ***@rcode*** - Remove the group code.
+
+🔹 ***@rpic*** - Remove the group picture.
 
 Please enter a command to get started. If you need any assistance, type *@commands* to see the complete list of available commands.
 
@@ -41,7 +58,7 @@ Please note that some commands may require additional information or a bit of pa
 
 # Bot Deployment on EC2
 
-This bot is deployed on an EC2 (Elastic Compute Cloud) instance. EC2 is a web service provided by Amazon Web Services (AWS) that allows you to create and manage virtual servers in the cloud.
+This bot is deployed on an **EC2 (Elastic Compute Cloud)** instance. **EC2** is a web service provided by Amazon Web Services **(AWS)** that allows you to create and manage virtual servers in the cloud.
 
 ## Deployment Steps
 
