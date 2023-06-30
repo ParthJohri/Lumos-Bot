@@ -240,13 +240,11 @@ async function WABot() {
     const str = getText(message);
     const text = str.trim();
     if (!text.toLowerCase().startsWith("@commands")) return;
-    const command = `👋 Welcome to the WhatsApp Bot!
-
-🤖 This bot can assist you with various commands. Here are some available commands:
+    const command = `👋 Welcome to the Parth-WBot\n🤖 Your Multi-Purpose Assistant\nThis bot can assist you with various commands. Here are some available commands:
 
 *@commands* - To List all commands
 
-*General Functions*
+*General Commands*
 -----------------------------
 *@mirror* - Mirror your text
 *@ask* - Ask a question
@@ -256,11 +254,20 @@ async function WABot() {
 *@ytd* - Download a YouTube video (provide the video link after the command)
 *@fbd* - Download a Facebook video (provide the video link after the command)
 
-*Group Functions*
+*Coding Commands*
+-----------------------------
+*@lc* - Use this command to get information about upcoming LeetCode contests.
+*@cf* - Use this command to access Codeforces, a popular competitive programming platform.
+*@cc* - Use this command to access Codechef, an online platform for competitive programming and coding challenges.
+*@at* - Use this command to access Atcoder, a Japanese programming contest platform.
+*@contests* - Use this command to get information about upcoming coding contests from various platforms.
+*@hackathon* - Use this command to get information about ongoing or upcoming hackathons.
+
+*Group Commands*
 ---------------------------
 *@all* - Tag all users
 *@gname* - To change the Group Name by writing Name after the command
-*@gcreate* - To create the Group
+*@gcreate* - To create the group, add a number after it as well
 *@gdes* - To change the Group Description by writing Description after the command
 *@leave* - To leave the group
 *@gset a* - To allow only admins to send messages
@@ -411,7 +418,7 @@ Please enter a command to get started. If you need any assistance, type *@comman
       reply =
         reply === ""
           ? sorryMessage
-          : reply + horizontalLine + "\n\t\t*All The Best*\n" + horizontalLine;
+          : reply + horizontalLine + "\n\t\t *All The Best*\n" + horizontalLine;
       sendMessage(key.remoteJid, { text: reply });
     });
   };
@@ -541,6 +548,133 @@ Please enter a command to get started. If you need any assistance, type *@comman
     const { key, message } = msg;
     await sock.removeProfilePicture(key.remoteJid);
   };
+  const handleCommonReply = (obj) => {
+    let reply = "";
+    let len = Math.min(obj.length, 10);
+    for (let i = 0; i < len; i++) {
+      let contest = obj[i];
+      let name = `*Name:* ${contest.name}`;
+      let url = `*Contest Link:* ${contest.url}`;
+      let startTime = new Date(contest.start_time);
+      let endTime = new Date(contest.end_time);
+      // Convert to Indian Standard Time (IST)
+      let startTimeIST = startTime.toLocaleString("en-IN", {
+        timeZone: "Asia/Kolkata",
+      });
+      let endTimeIST = endTime.toLocaleString("en-IN", {
+        timeZone: "Asia/Kolkata",
+      });
+      let date = startTimeIST.split(",")[0];
+      let time = startTimeIST.split(",")[1].trim();
+      let stime = `*Start Time:* ${date} ${time}`;
+      date = endTimeIST.split(",")[0];
+      time = endTimeIST.split(",")[1].trim();
+      let etime = `*End Time:* ${date} ${time}`;
+      reply += name + "\n" + url + "\n" + stime + "\n" + etime;
+      if (i !== len - 1) reply += "\n\n";
+    }
+    return reply;
+  };
+  const handleLeetCode = async (msg) => {
+    const { key, message } = msg;
+    const response = await axios.get("https://kontests.net/api/v1/leet_code");
+    const obj = response.data;
+    let reply = "*LeetCode Contests*\n";
+    reply += "---------------------\n";
+    reply += handleCommonReply(obj);
+    if (obj.length === 0) {
+      reply = "*No Upcoming LeetCode Contests Available*";
+    }
+    sendMessage(key.remoteJid, { text: reply });
+  };
+  const handleCodeforces = async (msg) => {
+    const { key, message } = msg;
+    const response = await axios.get("https://kontests.net/api/v1/codeforces");
+    const obj = response.data;
+    let reply = "*Codeforces Contests*\n";
+    reply += "-----------------------\n";
+    reply += handleCommonReply(obj);
+    if (obj.length === 0) {
+      reply = "*No Upcoming Codeforces Contests Available*";
+    }
+    sendMessage(key.remoteJid, { text: reply });
+  };
+  const handleCodechef = async (msg) => {
+    const { key, message } = msg;
+    const response = await axios.get("https://kontests.net/api/v1/code_chef");
+    const obj = response.data;
+    let reply = "*Codechef Contests*\n";
+    reply += "-----------------------\n";
+    reply += handleCommonReply(obj);
+    if (obj.length === 0) {
+      reply = "*No Upcoming Codechef Contests Available*";
+    }
+    sendMessage(key.remoteJid, { text: reply });
+  };
+  const handleAtcoder = async (msg) => {
+    const { key, message } = msg;
+    const response = await axios.get("https://kontests.net/api/v1/at_coder");
+    const obj = response.data;
+    let reply = "*Atcoder Contests*\n";
+    reply += "-------------------\n";
+    reply += handleCommonReply(obj);
+    if (obj.length === 0) {
+      reply = "*No Upcoming Atcoder Contests Available*";
+    }
+    sendMessage(key.remoteJid, { text: reply });
+  };
+  const handleContests = async (msg) => {
+    const { key, message } = msg;
+    const response = await axios.get("https://kontests.net/api/v1/all");
+    const obj = response.data;
+    let reply = "*All Contests*\n";
+    reply += "-------------------\n";
+    reply += handleCommonReply(obj);
+    if (obj.length === 0) {
+      reply = "*No Upcoming Contests Available*";
+    }
+    sendMessage(key.remoteJid, { text: reply });
+  };
+  const handleHackathons = async (msg) => {
+    const { key, message } = msg;
+    try {
+      const response = await axios.get(
+        "https://devpost.com/api/hackathons?status[]=upcoming"
+      );
+      const hackathons = response.data.hackathons;
+      let reply = "*Hackathons*\n";
+      reply += "--------------\n";
+      for (let i = 0; i < hackathons.length; i++) {
+        let hackathon = hackathons[i];
+        const title = hackathon.title || "N/A";
+        const startDate =
+          hackathon.submission_period_dates.split(" - ")[0] || "N/A";
+        const endDate =
+          hackathon.submission_period_dates.split(" - ")[1] || "N/A";
+        const location = hackathon.displayed_location.location || "N/A";
+        const url = hackathon.url || "N/A";
+        const themes =
+          hackathon.themes.map((theme) => theme.name).join(", ") || "N/A";
+        const prizeAmount =
+          hackathon.prize_amount.replace(/<\/?[^>]+(>|$)/g, "") || "N/A";
+        reply += `*Title:* ${title}\n`;
+        reply += `*Start Date:* ${startDate}\n`;
+        reply += `*End Date:* ${endDate}\n`;
+        reply += `*Location:* ${location}\n`;
+        reply += `*URL:* ${url}\n`;
+        reply += `*Themes:* ${themes}\n`;
+        reply += `*Prize Amount:* ${prizeAmount}`;
+        if (i !== hackathons.length - 1) reply += "\n\n";
+      }
+      if (hackathons.length === 0) {
+        reply = "*No Upcoming Hackathons Available*";
+      }
+      sendMessage(key.remoteJid, { text: reply });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleAll = async (msg) => {
     const { key, message } = msg;
     const str = getText(message);
@@ -616,6 +750,14 @@ Please enter a command to get started. If you need any assistance, type *@comman
           handleRemoveDisplayPicture(msg);
         else if (getText(msg.message).startsWith("@gcreate"))
           handleCreateGroup(msg);
+        else if (getText(msg.message).startsWith("@lc")) handleLeetCode(msg);
+        else if (getText(msg.message).startsWith("@cf")) handleCodeforces(msg);
+        else if (getText(msg.message).startsWith("@cc")) handleCodechef(msg);
+        else if (getText(msg.message).startsWith("@at")) handleAtcoder(msg);
+        else if (getText(msg.message).startsWith("@contests"))
+          handleContests(msg);
+        else if (getText(msg.message).startsWith("@hackathon"))
+          handleHackathons(msg);
         // else if (getText(msg.message).startsWith("@gadd")) handleGroupAdd(msg); // Not Working
         // handleSticker(msg); // Not Working
         handleIG(msg); // Not Working
