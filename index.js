@@ -240,45 +240,70 @@ async function WABot() {
     const str = getText(message);
     const text = str.trim();
     if (!text.toLowerCase().startsWith("@commands")) return;
-    const command = `👋 Welcome to the Parth-WBot\n🤖 Your Multi-Purpose Assistant\nThis bot can assist you with various commands. Here are some available commands:
+    const command = `👋 Welcome to the Parth-WBot, your ultimate WhatsApp assistant!
 
-*@commands* - To List all commands
+🤖 Our bot is packed with powerful commands to enhance your WhatsApp experience. Here's a list of available commands:
 
 *General Commands*
------------------------------
-*@mirror* - Mirror your text
-*@ask* - Ask a question
-*@meme* - Get a random meme 
-*@company* - Get a MAANG alternative company
-*@jobs* - Write the jobType like @jobs software after the command to get the latest job listings 
-*@ytd* - Download a YouTube video (provide the video link after the command)
-*@fbd* - Download a Facebook video (provide the video link after the command)
+------------------------------
+
+✨ *@mirror* - Mirror your text and create fascinating reflections.
+
+❓ *@ask* - Ask a question and get insightful answers.
+
+😂 *@meme* - Enjoy a good laugh with a random meme.
+
+🏢 *@company* - Get an alternative company similar to MAANG (Microsoft, Apple, Amazon, Netflix, Google).
+
+👩‍💼 *@jobs* - Get the latest job listings. Specify the job type after the command, e.g., @jobs software.
+
+📺 *@ytd* - Download YouTube videos. Provide the video link after the command.
+
+📹 *@fbd* - Download Facebook videos. Provide the video link after the command.
 
 *Coding Commands*
------------------------------
-*@lc* - Use this command to get information about upcoming LeetCode contests.
-*@cf* - Use this command to access Codeforces, a popular competitive programming platform.
-*@cc* - Use this command to access Codechef, an online platform for competitive programming and coding challenges.
-*@at* - Use this command to access Atcoder, a Japanese programming contest platform.
-*@contests* - Use this command to get information about upcoming coding contests from various platforms.
-*@hackathon* - Use this command to get information about ongoing or upcoming hackathons.
+------------------------------
+
+🏆 *@lc* - Get information about upcoming LeetCode contests.
+
+💻 *@cf* - Get information about upcoming Codeforces Contests, a popular competitive programming platform.
+
+🍽️ *@cc* - Get information about upcoming Codechef Contests, an online platform for competitive programming.
+
+🇯🇵 *@at* - Get information about upcoming Atcoder Contests, a Japanese programming contest platform.
+
+📝 *@contests* - Get information about upcoming coding contests from various platforms.
+
+🚀 *@hackathon* - Get information about ongoing or upcoming hackathons.
 
 *Group Commands*
----------------------------
-*@all* - Tag all users
-*@gname* - To change the Group Name by writing Name after the command
-*@gcreate* - To create the group, add a number after it as well
-*@gdes* - To change the Group Description by writing Description after the command
-*@leave* - To leave the group
-*@gset a* - To allow only admins to send messages
-*@gset na* - To allow everyone in the group to send messages
-*@gset l* - To allow only admins to change group settings 
-*@gset u* - To allow anyone to change group settings
-*@gcode* - To get the Group Code 
-*@rcode* - To remove the Group Code
-*@rpic* - To remove the Group Pic
+------------------------------
 
-Please enter a command to get started. If you need any assistance, type *@commands* to see the full list of available commands.`;
+📢 *@all* - Tag all users in the group.
+
+🏷️ *@gname* - Change the group name by writing the desired name after the command.
+
+➕ *@gcreate* - Create a new group.
+
+📝 *@gdes* - Change the group description by writing the desired description after the command.
+
+🚪 *@leave* - Leave the group.
+
+🔒 *@gset a* - Allow only admins to send messages in the group.
+
+🔓 *@gset na* - Allow everyone in the group to send messages.
+
+🔐 *@gset l* - Allow only admins to change group settings.
+
+🔓 *@gset u* - Allow anyone to change group settings.
+
+🔑 *@gcode* - Get the group code.
+
+❌ *@rcode* - Remove the group code.
+
+🖼️ *@rpic* - Remove the group picture.
+
+To get started, simply enter a command. If you need assistance, type *@commands* to see the complete list of available commands.`;
     sendMessage(key.remoteJid, { text: command }, { quoted: msg });
   };
 
