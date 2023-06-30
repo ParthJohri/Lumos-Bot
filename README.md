@@ -1,52 +1,68 @@
-# WhatsApp Bot
+# WhatsApp Bot - Parth-WBot
+  
+👋 Welcome to the **Parth-WBot**, your ultimate WhatsApp assistant!
 
-👋 Welcome to the **Parth-WBot**!
-
-🤖 This WhatsApp bot can assist you with various commands. Here are some available commands:
+🤖 Our bot is packed with powerful commands to enhance your WhatsApp experience. Here's a list of available commands:
 
 **General Functions**
 -----------------------------
-🔸 ***@mirror*** - Mirror your text.
+✨ **@mirror** - Mirror your text and create fascinating reflections.
 
-🔸 ***@ask*** - Ask a question.
+❓ **@ask** - Ask a question and get insightful answers.
 
-🔸 ***@meme*** - Get a random meme.
+😂 **@meme** - Enjoy a good laugh with a random meme.
 
-🔸 ***@company*** - Get an alternative company similar to MAANG (Microsoft, Apple, Amazon, Netflix, Google).
+🏢 **@company** - Get an alternative company similar to MAANG (Microsoft, Apple, Amazon, Netflix, Google).
 
-🔸 ***@jobs*** - Get the latest job listings. Specify the job type after the command, e.g., *@jobs software*.
+👩‍💼 **@jobs** - Get the latest job listings. Specify the job type after the command, e.g., `@jobs software`.
 
-🔸 ***@ytd*** - Download a YouTube video. Provide the video link after the command.
+📺 **@ytd** - Download YouTube videos. Provide the video link after the command.
 
-🔸 ***@fbd*** - Download a Facebook video. Provide the video link after the command.
+📹 **@fbd** - Download Facebook videos. Provide the video link after the command.
 
-**Group Functions**
+**Coding Commands**
+-----------------------------
+🏆 **@lc** - Get information about upcoming LeetCode contests.
+
+💻 **@cf** - Access Codeforces, a popular competitive programming platform.
+
+🍽️ **@cc** - Access Codechef, an online platform for competitive programming and coding challenges.
+
+🇯🇵 **@at** - Access Atcoder, a Japanese programming contest platform.
+
+📝 **@contests** - Get information about upcoming coding contests from various platforms.
+
+🚀 **@hackathon** - Get information about ongoing or upcoming hackathons.
+
+**Group Commands**
 ---------------------------
-🔹 ***@all*** - Tag all users in the group.
+📢 **@all** - Tag all users in the group.
 
-🔹 ***@gname*** - Change the group name by writing the desired name after the command.
+🏷️ **@gname** - Change the group name by writing the desired name after the command.
 
-🔹 ***@gcreate*** - Create a new group.
+➕ **@gcreate** - Create a new group.
 
-🔹 ***@gdes*** - Change the group description by writing the desired description after the command.
+📝 **@gdes** - Change the group description by writing the desired description after the command.
 
-🔹 ***@leave*** - Leave the group.
+🚪 **@leave** - Leave the group.
 
-🔹 ***@gset a*** - Allow only admins to send messages in the group.
+🔒 **@gset a** - Allow only admins to send messages in the group.
 
-🔹 ***@gset na*** - Allow everyone in the group to send messages.
+🔓 **@gset na** - Allow everyone in the group to send messages.
 
-🔹 ***@gset l*** - Allow only admins to change group settings.
+🔐 **@gset l** - Allow only admins to change group settings.
 
-🔹 ***@gset u*** - Allow anyone to change group settings.
+🔓 **@gset u** - Allow anyone to change group settings.
 
-🔹 *@gcode* - Get the group code.
+🔑 **@gcode** - Get the group code.
 
-🔹 ***@rcode*** - Remove the group code.
+❌ **@rcode** - Remove the group code.
 
-🔹 ***@rpic*** - Remove the group picture.
+🖼️ **@rpic** - Remove the group picture.
 
-Please enter a command to get started. If you need any assistance, type ***@commands*** to see the complete list of available commands.
+To get started, simply enter a command. If you need assistance, type **@commands** to see the complete list of available commands.
+
+🚀 Therefore get ready to unleash the power of **Parth-WBot** and enjoy a seamless WhatsApp experience and do tell me!
 
 ## How to Use
 1. Add the WhatsApp Bot to your group chat.
