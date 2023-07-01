@@ -1,4 +1,4 @@
-# WhatsApp Bot - Parth-WBot
+# Parth-WBot
   
 👋 Welcome to the **Parth-WBot**, your ultimate WhatsApp assistant!
 
