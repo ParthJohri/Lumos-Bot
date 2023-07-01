@@ -16,6 +16,8 @@
 
 👩‍💼 **@jobs** - Get the latest job listings. Specify the job type after the command, e.g., `@jobs software`.
 
+📰 **@news** - Get the latest news headlines.
+
 📺 **@ytd** - Download YouTube videos. Provide the video link after the command.
 
 📹 **@fbd** - Download Facebook videos. Provide the video link after the command.
