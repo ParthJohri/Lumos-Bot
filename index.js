@@ -257,6 +257,8 @@ async function WABot() {
 
 👩‍💼 *@jobs* - Get the latest job listings. Specify the job type after the command, e.g., @jobs software.
 
+📰 *@news* - Get the latest news headlines.
+
 📺 *@ytd* - Download YouTube videos. Provide the video link after the command.
 
 📹 *@fbd* - Download Facebook videos. Provide the video link after the command.
@@ -699,7 +701,58 @@ To get started, simply enter a command. If you need assistance, type *@commands*
       console.error(error);
     }
   };
+  const handleNews = async (msg) => {
+    const { key, message } = msg;
+    const str = getText(message);
+    const text = str.trim();
+    if (!text.toLowerCase().startsWith("@news")) return;
+    const response = await axios.get("https://inshorts-news.vercel.app/all");
+    const obj = response.data;
+    let reply = `*Today's News*\n`;
+    reply += "-----------------------\n\n";
+    const newsobj = obj.data;
+    let len = Math.min(newsobj.length, 5);
+    for (let i = 0; i < len; i++) {
+      let news = newsobj[i];
+      console.log(news);
 
+      let title =
+        news.title !== undefined && news.title !== null
+          ? `*Title:* ${news.title}\n`
+          : "";
+      let url =
+        news["inshorts-link"] !== undefined && news["inshorts-link"] !== null
+          ? `*Inshorts Link:* ${news["inshorts-link"]}\n`
+          : "";
+      let readMore =
+        news["read-more"] !== undefined && news["read-more"] !== null
+          ? `*Read More:* ${news["read-more"]}\n`
+          : "";
+      let description =
+        news.description !== undefined && news.description !== null
+          ? `*Description:* ${news.description}\n`
+          : "";
+      let time =
+        news.time !== undefined && news.time !== null
+          ? new Date(news.time)
+          : "";
+      let formattedTime = time
+        ? "*Time:* " +
+          time.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
+        : "";
+
+      reply += `${title}${url}${readMore}${description}${formattedTime}`;
+      if (i != len - 1) {
+        reply += "\n\n";
+      }
+    }
+
+    if (obj.length === 0) {
+      reply = "*No News Available*";
+    }
+
+    sendMessage(key.remoteJid, { text: reply });
+  };
   const handleAll = async (msg) => {
     const { key, message } = msg;
     const str = getText(message);
@@ -783,6 +836,7 @@ To get started, simply enter a command. If you need assistance, type *@commands*
           handleContests(msg);
         else if (getText(msg.message).startsWith("@hackathon"))
           handleHackathons(msg);
+        else if (getText(msg.message).startsWith("@news")) handleNews(msg);
         // else if (getText(msg.message).startsWith("@gadd")) handleGroupAdd(msg); // Not Working
         // handleSticker(msg); // Not Working
         handleIG(msg); // Not Working
