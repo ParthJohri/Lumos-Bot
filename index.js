@@ -9,7 +9,7 @@ const sharp = require("sharp");
 const linkedIn = require("linkedin-jobs-api");
 const { freshMeme } = require("./meme.js");
 const { getRandomCompany } = require("./company.js");
-
+const { fetchData } = require("./dailylc.js");
 // *! To fetch answers from OPEN AI
 const { Configuration, OpenAIApi } = require("openai");
 const dotenv = require("dotenv");
@@ -265,6 +265,8 @@ async function WABot() {
 
 *Coding Commands*
 ------------------------------
+
+🗓️ *@dlc* - To Get Daily LeetCode Challenge.
 
 🏆 *@lc* - Get information about upcoming LeetCode contests.
 
@@ -701,6 +703,71 @@ To get started, simply enter a command. If you need assistance, type *@commands*
       console.error(error);
     }
   };
+  const handleDailyChallenge = async (msg) => {
+    const { key, message } = msg;
+    const str = getText(message);
+    const text = str.trim();
+    if (!text.toLowerCase().startsWith("@dlc")) return;
+    try {
+      const response = await fetchData();
+      const date = response?.date || "NA";
+      const link = response?.link || "NA";
+      const question = response?.question || "NA";
+      const acRate = question?.acRate || "NA";
+      const difficulty = question?.difficulty || "NA";
+      const freqBar = question?.freqBar || "NA";
+      const title = question?.title || "NA";
+      const topicTags = question?.topicTags?.map((tag) => ({
+        name: tag?.name || "NA",
+      }));
+      const content = question?.content || "NA";
+      const pattern = /^.*?(?=<strong>Explanation)/s;
+      const match = content.match(pattern);
+      const extractedString = match ? match[0] : "";
+      extractedString.trim();
+      const formattedContent = extractedString
+        .replace(/<b>/g, "")
+        .replace(/<\/b>/g, "")
+        .replace(/<i>/g, "")
+        .replace(/<\/i>/g, "")
+        .replace(/<em>/g, "")
+        .replace(/<\/em>/g, "")
+        .replace(/<code>/g, "")
+        .replace(/<\/code>/g, "")
+        .replace(/<pre>/g, "")
+        .replace(/<\/pre>/g, "")
+        .replace(/<ul>/g, "")
+        .replace(/<\/ul>/g, "")
+        .replace(/<li>/g, "")
+        .replace(/<\/li>/g, "")
+        .replace(/<p>/g, "")
+        .replace(/<\/p>/g, "")
+        .replace(/<strong class="example">/g, "*")
+        .replace(/<\/strong>/g, "*")
+        .replace(/<strong>/g, "*")
+        .replace(/<\/strong>/g, "*")
+        .replace(/<ul>/g, "")
+        .replace(/<\/ul>/g, "")
+        .replace(/<li>/g, "")
+        .replace(/<\/li>/g, "")
+        .replace(/&nbsp;/g, "")
+        .replace(/&quot;/g, "")
+        .trim();
+      const reply =
+        `*📅 Date:* ${date}\n` +
+        `*📝 Question Title:* ${title}\n` +
+        `*🔗 Question Link:* https://leetcode.com${link}\n` +
+        `*💡 Question Description:* ${formattedContent}\n` +
+        `*AC Rate:* ${acRate}\n` +
+        `*Difficulty:* ${difficulty}\n` +
+        `*Freq Bar:* ${freqBar}\n` +
+        `*Topic Tags:* ${topicTags.map((tag) => tag.name).join(", ")}\n`;
+      sendMessage(key.remoteJid, { text: reply });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleNews = async (msg) => {
     const { key, message } = msg;
     const str = getText(message);
@@ -837,6 +904,8 @@ To get started, simply enter a command. If you need assistance, type *@commands*
         else if (getText(msg.message).startsWith("@hackathon"))
           handleHackathons(msg);
         else if (getText(msg.message).startsWith("@news")) handleNews(msg);
+        else if (getText(msg.message).startsWith("@dlc"))
+          handleDailyChallenge(msg);
         // else if (getText(msg.message).startsWith("@gadd")) handleGroupAdd(msg); // Not Working
         // handleSticker(msg); // Not Working
         handleIG(msg); // Not Working
