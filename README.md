@@ -2,7 +2,7 @@
   
 👋 Welcome to the **Lumos - Bot**, your ultimate WhatsApp assistant!
 
-🤖 Our bot is packed with powerful commands to enhance your WhatsApp experience. Here's a list of available commands:
+🤖 Lumos Bot is a chatbot that sheds light on queries, provides assistance, is packed with powerful commands to enhance your WhatsApp experience. Here's a list of available commands:
 
 **General Functions**
 -----------------------------
