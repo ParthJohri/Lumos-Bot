@@ -1,6 +1,6 @@
-# Parth-WBot
+# Lumos - Bot
   
-👋 Welcome to the **Parth-WBot**, your ultimate WhatsApp assistant!
+👋 Welcome to the **Lumos - Bot**, your ultimate WhatsApp assistant!
 
 🤖 Our bot is packed with powerful commands to enhance your WhatsApp experience. Here's a list of available commands:
 
