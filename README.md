@@ -66,6 +66,30 @@ To get started, simply enter a command. If you need assistance, type **@commands
 
 🚀 Therefore get ready to unleash the power of **Parth-WBot** and enjoy a seamless WhatsApp experience and do tell me!
 
+## Screenshots
+
+|      **@commands**      |     **@company**      |      **@contests**      |
+|-------------------------|-----------------------|-------------------------|
+| ![@commands](./lumos_bot/commands.png) | ![@company](./lumos_bot/company.png) | ![@contests](./lumos_bot/contests.png) |
+
+|       **@dlc**       |    **@hackathon**    |        **@jobs**         |
+|-------------------------|-----------------------|-------------------------|
+| ![dlc](./lumos_bot/dlc.png) | ![@hackathon](./lumos_bot/hackathon.png) | ![@jobs](./lumos_bot/jobs.png) |
+
+|       **@meme**       |       **@news**       |        **@cf**         |
+|-------------------------|-----------------------|-------------------------|
+| ![meme](./lumos_bot/meme.png) | ![@news](./lumos_bot/news.png) | ![@cf](./lumos_bot/cf.png) |
+
+|        **@at**        |        **@lc**         |         **@cc**         |
+|-------------------------|-----------------------|-------------------------|
+| ![at](./lumos_bot/at.png) | ![@lc](./lumos_bot/lc.png) | ![@cc](./lumos_bot/cc.png) |
+
+|        **@ask**         |      **@gset**         | **@mirror** |
+|-------------------------|-----------------------|-------------------------|
+| ![ask](./lumos_bot/ask.jpeg) | ![@gset](./lumos_bot/gset.jpeg) | ![@jobs internship](./lumos_bot/mirror.jpeg) |
+
+
+
 ## How to Use
 1. Add the WhatsApp Bot to your group chat.
 2. Type any of the commands mentioned above to trigger the desired functionality.
